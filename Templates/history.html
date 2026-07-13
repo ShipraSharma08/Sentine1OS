@@ -25,6 +25,17 @@
 <div class="container">
 
     <h1>📜 Scan History</h1>
+    <form action="/clear-history"
+      method="POST"
+      onsubmit="return confirm('Are you sure you want to delete ALL scan history? This cannot be undone.');">
+
+    <button type="submit">
+        🗑️ Clear All History
+    </button>
+
+</form>
+
+<br>
 
     <table border="1" cellpadding="10">
 

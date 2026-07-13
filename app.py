@@ -231,6 +231,19 @@ def delete_scan(scan_id):
         hash_value=hash_value
     )
 
+# ---------------- CLEAR ALL SCAN HISTORY ----------------
+@app.route("/clear-history", methods=["POST"])
+def clear_history():
+    connection = sqlite3.connect("sentinel.db")
+    cursor = connection.cursor()
+
+    cursor.execute("DELETE FROM scan_history")
+
+    connection.commit()
+    connection.close()
+
+    return redirect("/history")
+
 
 # ---------------- FILE INTEGRITY CHECKER ----------------
 @app.route("/integrity")
