@@ -8,7 +8,33 @@ app = Flask(__name__)
 # ---------------- HOME ----------------
 @app.route("/")
 def home():
-    return render_template("index.html")
+    connection = sqlite3.connect("sentinel.db")
+    cursor = connection.cursor()
+
+    # Total number of scans
+    cursor.execute("SELECT COUNT(*) FROM scan_history")
+    total_scans = cursor.fetchone()[0]
+
+    # Total safe files
+    cursor.execute(
+        "SELECT COUNT(*) FROM scan_history WHERE status = 'Safe'"
+    )
+    safe_files = cursor.fetchone()[0]
+
+    # Total dangerous files
+    cursor.execute(
+        "SELECT COUNT(*) FROM scan_history WHERE status = 'Dangerous'"
+    )
+    dangerous_files = cursor.fetchone()[0]
+
+    connection.close()
+
+    return render_template(
+        "index.html",
+        total_scans=total_scans,
+        safe_files=safe_files,
+        dangerous_files=dangerous_files
+    )
 
 
 # ---------------- FILE SCANNER ----------------
