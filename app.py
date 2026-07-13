@@ -4,6 +4,26 @@ import hashlib
 from datetime import datetime
 
 app = Flask(__name__)
+# ---------------- DATABASE INITIALIZATION ----------------
+def init_db():
+    connection = sqlite3.connect("sentinel.db")
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS scan_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            file_name TEXT NOT NULL,
+            status TEXT NOT NULL,
+            scanned_at TEXT
+        )
+    """)
+
+    connection.commit()
+    connection.close()
+
+
+# Initialize database when the application starts
+init_db()
 
 
 # ---------------- HOME / DASHBOARD ----------------
