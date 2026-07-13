@@ -2,17 +2,15 @@
 <html>
 
 <head>
-
     <title>SentinelOS</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
 <nav>
-
     <h2>🛡️ SentinelOS</h2>
 
     <a href="/">Home</a>
@@ -20,7 +18,8 @@
     <a href="/phone">Phone Validator</a>
     <a href="/password">Password Checker</a>
     <a href="/history">Scan History</a>
-
+    <a href="/hash">SHA-256 Hash</a>
+    <a href="/integrity">Integrity Checker</a>
 </nav>
 
 <h2>Features</h2>
@@ -28,51 +27,62 @@
 <div class="cards">
 
     <div class="card">
-
         <h3>📁 File Scanner</h3>
-
         <p>Scan suspicious files for threats.</p>
 
         <a href="/scanner">
             <button>Open</button>
         </a>
-
     </div>
 
+
     <div class="card">
-
         <h3>📞 Phone Validator</h3>
-
         <p>Validate 10-digit phone numbers.</p>
 
         <a href="/phone">
             <button>Open</button>
         </a>
-
     </div>
 
+
     <div class="card">
-
         <h3>🔑 Password Checker</h3>
-
         <p>Check password strength.</p>
 
         <a href="/password">
             <button>Open</button>
         </a>
-
     </div>
 
+
     <div class="card">
-
         <h3>📜 Scan History</h3>
-
         <p>View all scanned files.</p>
 
         <a href="/history">
             <button>Open</button>
         </a>
+    </div>
 
+
+    <div class="card">
+        <h3>🔐 SHA-256 Hash Generator</h3>
+        <p>Generate a unique SHA-256 hash for any file.</p>
+
+        <a href="/hash">
+            <button>Open</button>
+        </a>
+    </div>
+
+
+    <div class="card">
+        <h3>🛡️ File Integrity Checker</h3>
+        <p>Check whether a file has been modified.</p>
+
+        <a href="/integrity">
+            <button>Open</button>
+        </a>
     </div>
 
 </div>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SHA-256 Hash Generator</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<nav>
+    <h2>🛡️ SentinelOS</h2>
+
+    <a href="/">Home</a>
+    <a href="/scanner">File Scanner</a>
+    <a href="/phone">Phone Validator</a>
+    <a href="/password">Password Checker</a>
+    <a href="/history">Scan History</a>
+    <a href="/hash">SHA-256 Hash</a>
+    <a href="/integrity">Integrity Checker</a>
+</nav>
+
+<div class="container">
+
+    <h1>🔐 SHA-256 File Hash Generator</h1>
+
+    <p>Select a file to generate its unique SHA-256 hash.</p>
+
+    <form action="/generate-hash"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <input
+            type="file"
+            name="file"
+            required>
+
+        <br><br>
+
+        <button type="submit">
+            Generate Hash
+        </button>
+
+    </form>
+
+    {% if filename %}
+        <h3>File Name:</h3>
+        <p>{{ filename }}</p>
+    {% endif %}
+
+    {% if hash_value %}
+        <h3>SHA-256 Hash:</h3>
+        <p style="word-break: break-all;">
+            {{ hash_value }}
+        </p>
+    {% endif %}
+
+</div>
+
+</body>
+
+</html> 

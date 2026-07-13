@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>File Integrity Checker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<nav>
+    <h2>🛡️ SentinelOS</h2>
+
+    <a href="/">Home</a>
+    <a href="/scanner">File Scanner</a>
+    <a href="/phone">Phone Validator</a>
+    <a href="/password">Password Checker</a>
+    <a href="/history">Scan History</a>
+    <a href="/hash">SHA-256 Hash</a>
+    <a href="/integrity">Integrity Checker</a>
+</nav>
+
+<div class="container">
+
+    <h1>🛡️ File Integrity Checker</h1>
+
+    <p>
+        Select a file and enter its original SHA-256 hash
+        to check whether the file has been modified.
+    </p>
+
+    <form action="/check-integrity"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <input
+            type="file"
+            name="file"
+            required>
+
+        <br><br>
+
+        <input
+            type="text"
+            name="original_hash"
+            placeholder="Enter original SHA-256 hash"
+            required>
+
+        <br><br>
+
+        <button type="submit">
+            Check Integrity
+        </button>
+
+    </form>
+
+    {% if current_hash %}
+
+        <h3>Current SHA-256 Hash:</h3>
+
+        <p style="word-break: break-all;">
+            {{ current_hash }}
+        </p>
+
+    {% endif %}
+
+
+    {% if result %}
+
+        <h2>{{ result }}</h2>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>
