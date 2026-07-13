@@ -4,7 +4,8 @@
 <head>
     <title>Scan History</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
@@ -17,6 +18,8 @@
     <a href="/phone">Phone Validator</a>
     <a href="/password">Password Checker</a>
     <a href="/history">Scan History</a>
+    <a href="/hash">SHA-256 Hash</a>
+    <a href="/integrity">Integrity Checker</a>
 </nav>
 
 <div class="container">
@@ -29,6 +32,7 @@
             <th>ID</th>
             <th>File Name</th>
             <th>Status</th>
+            <th>Scanned At</th>
         </tr>
 
         {% for row in history %}
@@ -37,6 +41,14 @@
             <td>{{ row[0] }}</td>
             <td>{{ row[1] }}</td>
             <td>{{ row[2] }}</td>
+
+            <td>
+                {% if row[3] %}
+                    {{ row[3] }}
+                {% else %}
+                    Old Record
+                {% endif %}
+            </td>
         </tr>
 
         {% endfor %}

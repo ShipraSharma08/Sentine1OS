@@ -1,27 +1,28 @@
 from flask import Flask, render_template, request
 import sqlite3
 import hashlib
+from datetime import datetime
 
 app = Flask(__name__)
 
 
-# ---------------- HOME ----------------
+# ---------------- HOME / DASHBOARD ----------------
 @app.route("/")
 def home():
     connection = sqlite3.connect("sentinel.db")
     cursor = connection.cursor()
 
-    # Total number of scans
+    # Total scans
     cursor.execute("SELECT COUNT(*) FROM scan_history")
     total_scans = cursor.fetchone()[0]
 
-    # Total safe files
+    # Safe files
     cursor.execute(
         "SELECT COUNT(*) FROM scan_history WHERE status = 'Safe'"
     )
     safe_files = cursor.fetchone()[0]
 
-    # Total dangerous files
+    # Dangerous files
     cursor.execute(
         "SELECT COUNT(*) FROM scan_history WHERE status = 'Dangerous'"
     )
@@ -76,12 +77,19 @@ def scan():
             )
             break
 
+    # Current date and time
+    scanned_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Save scan result in SQLite database
     connection = sqlite3.connect("sentinel.db")
     cursor = connection.cursor()
 
     cursor.execute(
-        "INSERT INTO scan_history(file_name, status) VALUES (?, ?)",
-        (filename, status)
+        """
+        INSERT INTO scan_history(file_name, status, scanned_at)
+        VALUES (?, ?, ?)
+        """,
+        (filename, status, scanned_at)
     )
 
     connection.commit()
@@ -145,8 +153,10 @@ def check_password():
 
     if score <= 2:
         result = "🔴 Weak Password"
+
     elif score <= 4:
         result = "🟡 Medium Password"
+
     else:
         result = "🟢 Strong Password"
 
@@ -193,8 +203,11 @@ def generate_hash():
         )
 
     filename = file.filename
+
+    # Read uploaded file
     file_data = file.read()
 
+    # Generate SHA-256 hash
     hash_value = hashlib.sha256(file_data).hexdigest()
 
     return render_template(
@@ -213,7 +226,11 @@ def integrity():
 @app.route("/check-integrity", methods=["POST"])
 def check_integrity():
     file = request.files.get("file")
-    original_hash = request.form.get("original_hash", "").strip().lower()
+
+    original_hash = request.form.get(
+        "original_hash",
+        ""
+    ).strip().lower()
 
     if not file or file.filename == "":
         return render_template(
@@ -221,14 +238,23 @@ def check_integrity():
             result="❌ No file selected."
         )
 
+    # Read uploaded file
     file_data = file.read()
 
+    # Generate current SHA-256 hash
     current_hash = hashlib.sha256(file_data).hexdigest()
 
+    # Compare hashes
     if current_hash == original_hash:
-        result = "✅ File Integrity Verified — File has not been modified."
+        result = (
+            "✅ File Integrity Verified — "
+            "File has not been modified."
+        )
     else:
-        result = "⚠️ File Modified — SHA-256 hashes do not match."
+        result = (
+            "⚠️ File Modified — "
+            "SHA-256 hashes do not match."
+        )
 
     return render_template(
         "integrity.html",
