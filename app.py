@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,redirect
+from flask import Flask, render_template, request, redirect
 import sqlite3
 import hashlib
 from datetime import datetime
@@ -56,7 +56,7 @@ def scan():
 
     filename = file.filename.lower()
 
-    dangerous = [
+    dangerous_extensions = [
         ".exe",
         ".bat",
         ".cmd",
@@ -68,7 +68,7 @@ def scan():
     status = "Safe"
     message = f"🟢 Scan Complete! '{filename}' looks safe."
 
-    for ext in dangerous:
+    for ext in dangerous_extensions:
         if filename.endswith(ext):
             status = "Dangerous"
             message = (
@@ -80,7 +80,7 @@ def scan():
     # Current date and time
     scanned_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Save scan result in SQLite database
+    # Save scan result in database
     connection = sqlite3.connect("sentinel.db")
     cursor = connection.cursor()
 
@@ -186,22 +186,30 @@ def history():
     )
 
 
-# ---------------- SHA-256 HASH GENERATOR ----------------
-@app.route("/hash")
-def hash_page():
-    return render_template("hash.html")
+# ---------------- UPDATE SCAN STATUS ----------------
+@app.route("/update-scan/<int:scan_id>", methods=["POST"])
+def update_scan(scan_id):
+    new_status = request.form.get("status")
+
+    # Only allow valid status values
+    if new_status not in ["Safe", "Dangerous"]:
+        return redirect("/history")
+
+    connection = sqlite3.connect("sentinel.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "UPDATE scan_history SET status = ? WHERE id = ?",
+        (new_status, scan_id)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect("/history")
 
 
-@app.route("/generate-hash", methods=["POST"])
-def generate_hash():
-    file = request.files.get("file")
-
-    if not file or file.filename == "":
-        return render_template(
-            "hash.html",
-            result="❌ No file selected."
-        )
-    # ---------------- DELETE SCAN RECORD ----------------
+# ---------------- DELETE SCAN RECORD ----------------
 @app.route("/delete-scan/<int:scan_id>", methods=["POST"])
 def delete_scan(scan_id):
     connection = sqlite3.connect("sentinel.db")
@@ -217,19 +225,6 @@ def delete_scan(scan_id):
 
     return redirect("/history")
 
-    filename = file.filename
-
-    # Read uploaded file
-    file_data = file.read()
-
-    # Generate SHA-256 hash
-    hash_value = hashlib.sha256(file_data).hexdigest()
-
-    return render_template(
-        "hash.html",
-        filename=filename,
-        hash_value=hash_value
-    )
 
 # ---------------- CLEAR ALL SCAN HISTORY ----------------
 @app.route("/clear-history", methods=["POST"])
@@ -243,6 +238,37 @@ def clear_history():
     connection.close()
 
     return redirect("/history")
+
+
+# ---------------- SHA-256 HASH GENERATOR ----------------
+@app.route("/hash")
+def hash_page():
+    return render_template("hash.html")
+
+
+@app.route("/generate-hash", methods=["POST"])
+def generate_hash():
+    file = request.files.get("file")
+
+    if not file or file.filename == "":
+        return render_template(
+            "hash.html",
+            result="❌ No file selected."
+        )
+
+    filename = file.filename
+
+    # Read uploaded file
+    file_data = file.read()
+
+    # Generate SHA-256 hash
+    hash_value = hashlib.sha256(file_data).hexdigest()
+
+    return render_template(
+        "hash.html",
+        filename=filename,
+        hash_value=hash_value
+    )
 
 
 # ---------------- FILE INTEGRITY CHECKER ----------------
@@ -272,7 +298,7 @@ def check_integrity():
     # Generate current SHA-256 hash
     current_hash = hashlib.sha256(file_data).hexdigest()
 
-    # Compare hashes
+    # Compare original and current hashes
     if current_hash == original_hash:
         result = (
             "✅ File Integrity Verified — "

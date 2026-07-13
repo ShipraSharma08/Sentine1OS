@@ -25,17 +25,19 @@
 <div class="container">
 
     <h1>📜 Scan History</h1>
+
+    <!-- CLEAR ALL HISTORY -->
     <form action="/clear-history"
-      method="POST"
-      onsubmit="return confirm('Are you sure you want to delete ALL scan history? This cannot be undone.');">
+          method="POST"
+          onsubmit="return confirm('Are you sure you want to delete ALL scan history?');">
 
-    <button type="submit">
-        🗑️ Clear All History
-    </button>
+        <button type="submit">
+            🗑️ Clear All History
+        </button>
 
-</form>
+    </form>
 
-<br>
+    <br>
 
     <table border="1" cellpadding="10">
 
@@ -44,14 +46,18 @@
             <th>File Name</th>
             <th>Status</th>
             <th>Scanned At</th>
-            <th>Action</th>
+            <th>Update Status</th>
+            <th>Delete</th>
         </tr>
 
         {% for row in history %}
 
         <tr>
+
             <td>{{ row[0] }}</td>
+
             <td>{{ row[1] }}</td>
+
             <td>{{ row[2] }}</td>
 
             <td>
@@ -62,7 +68,37 @@
                 {% endif %}
             </td>
 
+            <!-- UPDATE STATUS -->
             <td>
+
+                <form action="/update-scan/{{ row[0] }}"
+                      method="POST">
+
+                    <select name="status">
+
+                        <option value="Safe"
+                            {% if row[2] == "Safe" %}selected{% endif %}>
+                            Safe
+                        </option>
+
+                        <option value="Dangerous"
+                            {% if row[2] == "Dangerous" %}selected{% endif %}>
+                            Dangerous
+                        </option>
+
+                    </select>
+
+                    <button type="submit">
+                        Update
+                    </button>
+
+                </form>
+
+            </td>
+
+            <!-- DELETE RECORD -->
+            <td>
+
                 <form action="/delete-scan/{{ row[0] }}"
                       method="POST"
                       onsubmit="return confirm('Are you sure you want to delete this scan record?');">
@@ -72,7 +108,9 @@
                     </button>
 
                 </form>
+
             </td>
+
         </tr>
 
         {% endfor %}
