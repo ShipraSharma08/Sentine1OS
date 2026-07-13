@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect
 import sqlite3
 import hashlib
 from datetime import datetime
@@ -201,6 +201,21 @@ def generate_hash():
             "hash.html",
             result="❌ No file selected."
         )
+    # ---------------- DELETE SCAN RECORD ----------------
+@app.route("/delete-scan/<int:scan_id>", methods=["POST"])
+def delete_scan(scan_id):
+    connection = sqlite3.connect("sentinel.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "DELETE FROM scan_history WHERE id = ?",
+        (scan_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect("/history")
 
     filename = file.filename
 
