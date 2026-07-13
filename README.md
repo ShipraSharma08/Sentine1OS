@@ -55,6 +55,23 @@ The project was built to explore practical concepts in cybersecurity utilities, 
   - Dangerous files
 - Statistics are dynamically calculated from the SQLite database.
 
+--- 
+---
+
+## 📸 Screenshots
+
+### Security Dashboard
+
+![SentinelOS Security Dashboard](screenshots/dashboard.png)
+
+### File Integrity Checker
+
+![SentinelOS File Integrity Checker](screenshots/integrity-checker.png)
+
+### Scan History and CRUD Operations
+
+![SentinelOS Scan History](screenshots/scan-history.png)
+
 ---
 
 ## 🛠️ Tech Stack
@@ -91,7 +108,7 @@ SentinelOS/
     └── integrity.html
     ⚙️ Installation and Setup
 1. Clone the repository
-git clone https://github.com/ShipraSharma08/Sentine1OS.git
+git clone https://github.com/ShipraSharma08/SentinelOS.gitg
 cd SentinelOS
 2. Create a virtual environment
 python -m venv venv
@@ -138,4 +155,5 @@ Search and filtering for scan history
 Production deployment
 👤 Author
 Shipra Sharma
-B.Tech Pursuing in IT,Interested in Networking and Information security
+B.Tech Pursuing in IT,Interested in Networking and Information security 
+
